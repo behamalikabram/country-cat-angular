@@ -1,0 +1,11 @@
+#main {
+    margin-top: 60px;
+}
+#country_container, #language_container {
+    max-height: 100px;
+    overflow-y: auto;
+}
+.range {
+    width: 80px;
+    display: inline-block;
+}

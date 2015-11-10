@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html ng-app="filterService">
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <title>Peace Corp Search</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap.min.css"/>
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="/bower_components/bootstrap/dist/css/bootstrap-theme.min.css"/>
+    
+
+    <link rel="stylesheet" href="/resources/css/style.css"/>
+    
+</head>
+<body>
+<script id="entry-template" type="text/x-handlebars-template">
+    <div class="media">
+        <a class="media-left" href="#">
+            <img src="{{{flag_image}}}" alt="...">
+        </a>
+        <div class="media-body">
+            <h4 class="media-heading">{{country}}</h4>
+            <p>{{{description}}}</p>
+            <p>{{{medical_considerations}}}</p>
+            <p><a href="{{country_page_url}}">Country Page</a> <a href="{{country_site_url}}">Country Site</a></p>
+        </div>
+    </div>
+</script>
+<nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#">Peace Corps Search</a>
+        </div>
+    </div>
+</nav>
+
+<div id="main" class="container-fluid">
+    <div class="row">
+        <div class="col-sm-3 col-md-2 sidebar" >
+            <form role="form" ng-controller="filterCtrl">
+                <h4>Region</h4>
+                <div id="region_container" class="checkbox">
+                    <ul>
+                    	<li ng-repeat="region in regions"><input type="hidden" ng-model="region.name" value="{{region.name}}" /><input type="checkbox"  ng-click="includeCountry(region.name, $index)" name="region" value="{{region.slug}}">{{region.name}}</li>
+                    </ul>
+                </div>
+                <hr />
+                <h4>Country</h4>
+                <div id="country_container" class="checkbox">
+                    <ul>
+                    	<li ng-repeat="country in countries"><input type="checkbox"  ng-click="filterFunc(country, $index)" name="country" value="{{country.slug}}">{{country.name}}</li>
+                    </ul>
+                </div>
+                <hr />
+                <h4>Sector</h4>
+                <div id="sector_container" class="checkbox">
+                    <ul>
+                        <li ng-repeat="sector in sectors"><input type="hidden" ng-model="sector" value="{{sector}}" /><input type="checkbox"  ng-click="includeCountry(sector, $index)" name="sector" value="{{sector}}">{{sector}}</li>
+                    </ul>
+                </div>
+                <hr />
+                <h4>Languages</h4>
+                <div id="language_container" class="checkbox">
+                    <ul>
+                    	 <li ng-repeat="language in languages"><input type="hidden" ng-model="language" value="{{language}}" /><input type="checkbox"  ng-click="includeCountry(language, $index)" name="language" value="{{language}}">{{language}}</li>
+                    </ul>
+                </div>
+                <hr />
+                <h4>Number of Volunteers</h4>
+                <div id="volunteer_container">
+                    <input type="text" class="form-control range" name="min"> - <input type="text" class="form-control range" name="max">
+                </div>
+                <hr />
+                <h4>Medical Consideration</h4>
+                <div id="keyword_container">
+                    <label>
+                        <input type="text" class="form-control" name="keyword" placeholder="Medical Consideration">
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div id="results" class="col-sm-9 col-md-10 main">
+
+        </div>
+    </div>
+</div>
+
+    <!-- Todo move application to angular and make it functional - meaning filter based on selection real time and include the videos in the results using the YouTube IFrame Player API if -->
+    
+    <script type="text/javascript" src="/bower_components/jquery/dist/jquery.min.js"></script>
+
+
+
+    [<!-- vendor -->
+    <script src="/bower_components/angular/angular.min.js"></script>
+    <script src="/resources/scripts/app.js"></script>
+    <script src="/resources/scripts/controllers/main.js"></script>
+    <script src="/resources/scripts/services/main.js"></script>
+    <script src="/resources/scripts/directives/main.js"></script>
+    <script src="/resources/scripts/config/routers.js"></script>
+
+     <!-- bootstrap -->           
+    <script src="/bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script src="/bower_components/handlebars/handlebars.min.js"></script>
+	<script></script>
+	<link></link>
+    <script type="text/javascript">
+    
+    // app( module ), controller, service ( service, factory, provider ), directive
+
+ 		var myApp = angular.module('filterService', ['ui.bootstrap']);
+ 		myApp.config('MyService', function($http) {
+ 			
+ 		});
+ 		myApp.factory('MyService', function($http) {
+ 			return {
+ 				
+ 			};
+ 		});
+ 		myApp.service('MyService', function($http) {
+ 			this.getCountries = function() {
+ 				return $http.get("/dummy/countries.json");
+ 			};
+ 		});
+ 		myApp.controller('filterCtrl', ['$scope', 'MyService', function($scope, MyService){
+ 			
+ 			var offset = 0;
+ 			
+ 			MyService.getCountries().success(function(response, status, headers, config) {
+				$scope.countries = response;
+			});
+			
+	    		$http.get("/dummy/countries.json")
+	  				.success(function(response, status, headers, config) {
+	  					$scope.countries = response;
+	  					
+	  					
+	  				});
+	  				
+	  			$http.get("/dummy/regions.json")
+	  				.success(function(response, status, headers, config) {
+	  					$scope.regions = response;
+	  					
+	  					
+	  			});
+	  			$http.get("/dummy/sectors.json")
+	  				.success(function(response, status, headers, config) {
+	  					$scope.sectors = response;
+	  					
+	  					
+	  			});
+	  			$http.get("/dummy/languages.json")
+	  				.success(function(response, status, headers, config) {
+	  					$scope.languages = response;
+	  					
+	  					
+	  			});
+	  			
+	  			$scope.selection = [];
+	  			
+	  			
+	  			$scope.filterFunc = function(country, idx) {
+			        
+			        var i = $scope.selection.indexOf(country);
+			        
+			        if(i > -1){
+
+			        	$scope.selection.splice(i, 1);
+			        		
+			        } else{
+			        	$scope.selection.push(country);
+			        	
+			        }
+			        
+			    
+			        countries = $scope.selection;
+			        
+					var source   = $("#entry-template").html();
+	                var template = Handlebars.compile(source);
+	                $("#results").empty();
+	                var num_of_countries = countries.length;
+	                for (var i = 0; i < 20 && i < num_of_countries; i++) {
+	                    var context = {
+	                        country: countries[i].name,
+	                        description: countries[i].description,
+	                        medical_considerations: countries[i].medical_considerations,
+	                        country_page_url: countries[i].country_page_url,
+	                        country_site_url: countries[i].country_site_url
+	                    };
+	                    var html = template(context);
+	                    
+	                    $("#results").append(html);
+	                    offset = i + 1;
+	                }
+			
+				};
+				
+	    	}]);
+
+    	//angular.element(document).ready(function() {
+	    //  angular.bootstrap(document, ['myApp']);
+	    //});
+    </script>
+</body>
+</html>
